@@ -9,17 +9,17 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-
+        Managers.Input.KeyAction -= OnKeyboard;
+        Managers.Input.KeyAction += OnKeyboard;
     }
 
-    float yAngle = 0f;
     void Update()
     {
-        //transform.Rotate(new Vector3(0f, Time.deltaTime * 100f, 0f));
+  
+    }
 
-        yAngle += Time.deltaTime * 100f;
-        //transform.rotation = Quaternion.Euler(new Vector3(0f, yAngle, 0f)); 
-
+    void OnKeyboard()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward), 0.2f);
