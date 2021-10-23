@@ -12,21 +12,36 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    float yAngle = 0f;
     void Update()
     {
-        // Local -> World
-        // TransformDirection
+        //transform.Rotate(new Vector3(0f, Time.deltaTime * 100f, 0f));
 
-        // World -> Local
-        // InverseTransformDirection
+        yAngle += Time.deltaTime * 100f;
+        //transform.rotation = Quaternion.Euler(new Vector3(0f, yAngle, 0f)); 
 
         if (Input.GetKey(KeyCode.W))
-            transform.Translate(Vector3.forward * Time.deltaTime * speed);
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward), 0.2f);
+            transform.position += Vector3.forward * Time.deltaTime * speed;
+        }
+
         if (Input.GetKey(KeyCode.S))
-            transform.Translate(Vector3.back * Time.deltaTime * speed);
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back), 0.2f);
+            transform.position += Vector3.back * Time.deltaTime * speed;
+        }
+
         if (Input.GetKey(KeyCode.A))
-            transform.Translate(Vector3.left * Time.deltaTime * speed);
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.left), 0.2f);
+            transform.position += Vector3.left * Time.deltaTime * speed;
+        }
+
         if (Input.GetKey(KeyCode.D))
-            transform.Translate(Vector3.right * Time.deltaTime * speed);
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.right), 0.2f);
+            transform.position += Vector3.right * Time.deltaTime * speed;
+        }
     }
 }
