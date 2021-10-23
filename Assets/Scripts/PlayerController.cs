@@ -4,20 +4,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField]
+    float speed = 10f;
+
     void Start()
     {
-        
+
     }
 
     void Update()
     {
+        // Local -> World
+        // TransformDirection
+
+        // World -> Local
+        // InverseTransformDirection
+
         if (Input.GetKey(KeyCode.W))
-            transform.position += new Vector3(0f, 0f, 1f);
+            transform.Translate(Vector3.forward * Time.deltaTime * speed);
         if (Input.GetKey(KeyCode.S))
-            transform.position -= new Vector3(0f, 0f, 1f);
+            transform.Translate(Vector3.back * Time.deltaTime * speed);
         if (Input.GetKey(KeyCode.A))
-            transform.position -= new Vector3(1f, 0f, 0f);
+            transform.Translate(Vector3.left * Time.deltaTime * speed);
         if (Input.GetKey(KeyCode.D))
-            transform.position += new Vector3(1f, 0f, 0f);
+            transform.Translate(Vector3.right * Time.deltaTime * speed);
     }
 }
