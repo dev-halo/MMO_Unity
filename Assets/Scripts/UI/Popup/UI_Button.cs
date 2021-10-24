@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_Button : UI_Base
+public class UI_Button : UI_Popup
 {
     enum Buttons
     {
