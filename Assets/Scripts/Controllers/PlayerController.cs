@@ -43,11 +43,13 @@ public class PlayerController : MonoBehaviour
         }
 
         Animator anim = GetComponent<Animator>();
+        anim.SetFloat("speed", speed);
     }
 
     void UpdateIdle()
     {
         Animator anim = GetComponent<Animator>();
+        anim.SetFloat("speed", 0f);
     }
 
     void Update()
