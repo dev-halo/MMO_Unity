@@ -34,6 +34,17 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
             }
         }
+
+        if (moveToDest)
+        {
+            Animator anim = GetComponent<Animator>();
+            anim.Play("RUN");
+        }
+        else
+        {
+            Animator anim = GetComponent<Animator>();
+            anim.Play("WAIT");
+        }
     }
 
     void OnKeyboard()
@@ -41,25 +52,25 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward), 0.2f);
-            transform.position += Vector3.forward * Time.deltaTime * speed;
+            transform.position += speed * Time.deltaTime * Vector3.forward;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back), 0.2f);
-            transform.position += Vector3.back * Time.deltaTime * speed;
+            transform.position += speed * Time.deltaTime * Vector3.back;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.left), 0.2f);
-            transform.position += Vector3.left * Time.deltaTime * speed;
+            transform.position += speed * Time.deltaTime * Vector3.left;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.right), 0.2f);
-            transform.position += Vector3.right * Time.deltaTime * speed;
+            transform.position += speed * Time.deltaTime * Vector3.right;
         }
 
         moveToDest = false;
@@ -67,18 +78,13 @@ public class PlayerController : MonoBehaviour
 
     void OnMouseClicked(Define.MouseEvent evt)
     {
-        if (evt != Define.MouseEvent.Click)
-            return;
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100f, Color.red, 1f);
 
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Wall")))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, LayerMask.GetMask("Wall")))
         {
             destPos = hit.point;
             moveToDest = true;
-            //Debug.Log($"Raycast Camera @ {hit.collider.gameObject.tag}");
         }
     }
 }
