@@ -10,11 +10,13 @@ public class Managers : MonoBehaviour
     InputManager input = new InputManager();
     ResourceManager resource = new ResourceManager();
     SceneManagerEx scene = new SceneManagerEx();
+    SoundManager sound = new SoundManager();
     UIManager ui = new UIManager();
 
     public static InputManager Input { get { return Instance.input; } }
     public static ResourceManager Resource { get { return Instance.resource; } }
     public static SceneManagerEx Scene { get { return Instance.scene; } }
+    public static SoundManager Sound { get { return Instance.sound; } }
     public static UIManager UI { get { return Instance.ui; } }
 
     void Start()
