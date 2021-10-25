@@ -8,12 +8,14 @@ public class Managers : MonoBehaviour
     public static Managers Instance { get { Init(); return s_instance; } }
 
     InputManager input = new InputManager();
+    PoolManager pool = new PoolManager();
     ResourceManager resource = new ResourceManager();
     SceneManagerEx scene = new SceneManagerEx();
     SoundManager sound = new SoundManager();
     UIManager ui = new UIManager();
 
     public static InputManager Input { get { return Instance.input; } }
+    public static PoolManager Pool { get { return Instance.pool; } }
     public static ResourceManager Resource { get { return Instance.resource; } }
     public static SceneManagerEx Scene { get { return Instance.scene; } }
     public static SoundManager Sound { get { return Instance.sound; } }
