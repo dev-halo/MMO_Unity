@@ -5,13 +5,13 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    float speed = 10f;
-
+    PlayerStat stat;
     Vector3 destPos;
 
     void Start()
     {
+        stat = GetComponent<PlayerStat>();
+
         Managers.Input.MouseAction -= OnMouseClicked;
         Managers.Input.MouseAction += OnMouseClicked;
     }
@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
         Die,
         Moving,
         Idle,
+        Skill,
     }
 
     PlayerState state = PlayerState.Idle;
@@ -39,7 +40,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             NavMeshAgent nma = gameObject.GetOrAddComponent<NavMeshAgent>();
-            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0f, dir.magnitude);
+            float moveDist = Mathf.Clamp(stat.MoveSpeed * Time.deltaTime, 0f, dir.magnitude);
             nma.Move(dir.normalized * moveDist);
 
             Debug.DrawRay(transform.position + Vector3.up * 0.5f, dir.normalized, Color.green);
@@ -53,7 +54,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Animator anim = GetComponent<Animator>();
-        anim.SetFloat("speed", speed);
+        anim.SetFloat("speed", stat.MoveSpeed);
     }
 
     void UpdateIdle()
@@ -80,6 +81,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    int mask = (1 << (int)Define.Layer.Ground) | (1 << (int)Define.Layer.Monster);
+
     void OnMouseClicked(Define.MouseEvent evt)
     {
         if (state == PlayerState.Die)
@@ -88,10 +91,19 @@ public class PlayerController : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         //Debug.DrawRay(Camera.main.transform.position, ray.direction * 100f, Color.red, 1f);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, LayerMask.GetMask("Wall")))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, mask))
         {
             destPos = hit.point;
             state = PlayerState.Moving;
+
+            if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
+            {
+                Debug.Log("Monster Click");
+            }
+            else
+            {
+                Debug.Log("Ground Click");
+            }
         }
     }
 }
