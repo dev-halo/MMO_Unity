@@ -51,6 +51,10 @@ public class PoolManager
                 poolable = Create();
 
             poolable.gameObject.SetActive(true);
+
+            if (parent == null)
+                poolable.transform.parent = Managers.Scene.CurrentScene.transform;
+
             poolable.transform.parent = parent;
             poolable.IsUsing = true;
 

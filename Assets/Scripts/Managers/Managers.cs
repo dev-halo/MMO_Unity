@@ -45,6 +45,7 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             s_instance = go.GetComponent<Managers>();
 
+            s_instance.pool.Init();
             s_instance.sound.Init();
         }
     }
@@ -55,5 +56,6 @@ public class Managers : MonoBehaviour
         Sound.Clear();
         Scene.Clear();
         UI.Clear();
+        Pool.Clear();
     }
 }
