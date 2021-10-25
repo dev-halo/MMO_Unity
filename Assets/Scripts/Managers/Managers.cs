@@ -46,4 +46,12 @@ public class Managers : MonoBehaviour
             s_instance.sound.Init();
         }
     }
+
+    public static void Clear()
+    {
+        Input.Clear();
+        Sound.Clear();
+        Scene.Clear();
+        UI.Clear();
+    }
 }
