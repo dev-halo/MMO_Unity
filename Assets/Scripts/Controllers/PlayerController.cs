@@ -5,17 +5,6 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    PlayerStat stat;
-    Vector3 destPos;
-
-    void Start()
-    {
-        stat = GetComponent<PlayerStat>();
-
-        Managers.Input.MouseAction -= OnMouseEvent;
-        Managers.Input.MouseAction += OnMouseEvent;
-    }
-
     public enum PlayerState
     {
         Die,
@@ -24,8 +13,15 @@ public class PlayerController : MonoBehaviour
         Skill,
     }
 
+    int mask = (1 << (int)Define.Layer.Ground) | (1 << (int)Define.Layer.Monster);
+
+    PlayerStat stat;
+    Vector3 destPos;
+
     [SerializeField]
     PlayerState state = PlayerState.Idle;
+
+    GameObject lockTarget;
 
     public PlayerState State
     {
@@ -38,23 +34,28 @@ public class PlayerController : MonoBehaviour
             switch (state)
             {
                 case PlayerState.Die:
-                    anim.SetBool("attack", false);
                     break;
                 case PlayerState.Moving:
-                    anim.SetFloat("speed", stat.MoveSpeed);
-                    anim.SetBool("attack", false);
+                    anim.CrossFade("RUN", 0.1f);
                     break;
                 case PlayerState.Idle:
-                    anim.SetFloat("speed", 0f);
-                    anim.SetBool("attack", false);
+                    anim.CrossFade("WAIT", 0.1f);
                     break;
                 case PlayerState.Skill:
-                    anim.SetBool("attack", true);
+                    anim.CrossFade("ATTACK", 0.1f, -1, 0f);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    void Start()
+    {
+        stat = GetComponent<PlayerStat>();
+
+        Managers.Input.MouseAction -= OnMouseEvent;
+        Managers.Input.MouseAction += OnMouseEvent;
     }
 
     void UpdateDie()
@@ -65,7 +66,7 @@ public class PlayerController : MonoBehaviour
     {
         if (lockTarget != null)
         {
-            float distance = (destPos - transform.position).magnitude;
+            float distance = (lockTarget.transform.position - transform.position).magnitude;
             if (distance <= 1f)
             {
                 State = PlayerState.Skill;
@@ -103,14 +104,26 @@ public class PlayerController : MonoBehaviour
 
     void UpdateSkill()
     {
-
+        if (lockTarget != null)
+        {
+            Vector3 dir = lockTarget.transform.position - transform.position;
+            Quaternion quat = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Lerp(transform.rotation, quat, 20 * Time.deltaTime);
+        }
     }
 
     void OnHitEvent()
     {
         Debug.Log("OnHitEvent");
 
-        State = PlayerState.Moving;
+        if (stopSkill)
+        {
+            State = PlayerState.Idle;
+        }
+        else
+        {
+            State = PlayerState.Skill;
+        }
     }
 
     void Update()
@@ -134,15 +147,33 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    int mask = (1 << (int)Define.Layer.Ground) | (1 << (int)Define.Layer.Monster);
 
-    GameObject lockTarget;
-
+    bool stopSkill = false;
     void OnMouseEvent(Define.MouseEvent evt)
     {
-        if (State == PlayerState.Die)
-            return;
+        switch (State)
+        {
+            case PlayerState.Die:
+                break;
+            case PlayerState.Moving:
+                OnMouseEvent_IdleRun(evt);
+                break;
+            case PlayerState.Idle:
+                OnMouseEvent_IdleRun(evt);
+                break;
+            case PlayerState.Skill:
+                {
+                    if (evt == Define.MouseEvent.PointerUp)
+                        stopSkill = true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
+    void OnMouseEvent_IdleRun(Define.MouseEvent evt)
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         bool raycastHit = Physics.Raycast(ray, out RaycastHit hit, 100f, mask);
         //Debug.DrawRay(Camera.main.transform.position, ray.direction * 100f, Color.red, 1f);
@@ -151,9 +182,7 @@ public class PlayerController : MonoBehaviour
         {
             case Define.MouseEvent.Press:
                 {
-                    if (lockTarget != null)
-                        destPos = lockTarget.transform.position;
-                    else if (raycastHit)
+                    if (lockTarget == null && raycastHit)
                         destPos = hit.point;
                 }
                 break;
@@ -163,6 +192,7 @@ public class PlayerController : MonoBehaviour
                     {
                         destPos = hit.point;
                         State = PlayerState.Moving;
+                        stopSkill = false;
 
                         if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
                             lockTarget = hit.collider.gameObject;
@@ -172,6 +202,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case Define.MouseEvent.PointerUp:
+                stopSkill = true;
                 break;
             case Define.MouseEvent.Click:
                 break;
