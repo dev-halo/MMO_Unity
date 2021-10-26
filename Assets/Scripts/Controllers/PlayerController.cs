@@ -27,7 +27,7 @@ public class PlayerController : BaseController
     {
         if (lockTarget != null)
         {
-            float distance = (lockTarget.transform.position - transform.position).magnitude;
+            float distance = (destPos - transform.position).magnitude;
             if (distance <= 1f)
             {
                 State = Define.State.Skill;
@@ -71,9 +71,7 @@ public class PlayerController : BaseController
         if (lockTarget != null)
         {
             Stat targetStat = lockTarget.GetComponent<Stat>();
-            PlayerStat myStat = GetComponent<PlayerStat>();
-            int damage = Mathf.Max(0, myStat.Attack - targetStat.Defense);
-            targetStat.Hp -= damage;
+            targetStat.OnAttacked(stat);
         }
 
         if (stopSkill)
@@ -120,7 +118,10 @@ public class PlayerController : BaseController
             case Define.MouseEvent.Press:
                 {
                     if (lockTarget == null && raycastHit)
+                    {
                         destPos = hit.point;
+                        destPos.y = 0f;
+                    }
                 }
                 break;
             case Define.MouseEvent.PointerDown:
