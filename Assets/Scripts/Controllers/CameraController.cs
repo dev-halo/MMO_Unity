@@ -22,6 +22,11 @@ public class CameraController : MonoBehaviour
     {
         if (mode == Define.CameraMode.QuarterView)
         {
+            if (player == null)
+            {
+                return;
+            }
+
             RaycastHit hit;
             if (Physics.Raycast(player.transform.position, delta, out hit, delta.magnitude, LayerMask.GetMask("Wall")))
             {
