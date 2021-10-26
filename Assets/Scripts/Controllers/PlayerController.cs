@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class PlayerController : BaseController
 {
@@ -27,6 +26,7 @@ public class PlayerController : BaseController
     {
         if (lockTarget != null)
         {
+            destPos = lockTarget.transform.position;
             float distance = (destPos - transform.position).magnitude;
             if (distance <= 1f)
             {
@@ -36,6 +36,7 @@ public class PlayerController : BaseController
         }
 
         Vector3 dir = destPos - transform.position;
+        dir.y = 0f;
         if (dir.magnitude < 0.1f)
         {
             State = Define.State.Idle;
